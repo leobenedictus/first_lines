@@ -1,9 +1,25 @@
-.env
-*.db
+# Python
 __pycache__/
 *.pyc
-.DS_Store
-books.json
-text_cache/
-instance/
+*.pyo
+
+# Environment
+.env
+.env.*
+
+# Database
+*.db
 *.db-journal
+instance/
+
+# Local caches
+text_cache/
+
+# Data files
+books.json
+
+# macOS
+.DS_Store
+
+# Generated / scratch
+review.html
