@@ -1,0 +1,428 @@
+/* =========================================================
+   First Lines — Literary Minimal theme
+   Inspired by leobenedictus.co.uk
+   ========================================================= */
+
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --bg:     #faf9f6;
+    --ink:    #1c1c1a;
+    --mid:    #6b6b65;
+    --rule:   #d8d5cc;
+    --font:   'EB Garamond', Georgia, serif;
+}
+
+body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font);
+    font-size: 20px;
+    line-height: 1.65;
+}
+
+a { color: var(--ink); }
+
+/* ── CONTAINER ── */
+.container {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 0 5vw;
+}
+
+/* ── SITE HEADER ── */
+.site-header {
+    text-align: center;
+    padding: 3.5rem 0 2rem;
+    margin-bottom: 2.5rem;
+}
+
+.site-header h1 {
+    font-size: 2rem;
+    font-weight: 400;
+    letter-spacing: 0.02em;
+    margin-bottom: 0.4rem;
+}
+
+.site-header p {
+    color: var(--mid);
+    font-style: italic;
+    font-size: 1rem;
+    max-width: 520px;
+    margin: 0 auto;
+}
+
+.comparisons-counter {
+    font-size: 0.75rem !important;
+    font-style: normal !important;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--mid) !important;
+    opacity: 0.7;
+    margin-top: 0.75rem !important;
+}
+
+/* ── RANKING NUDGE ── */
+.ranking-banner {
+    margin-top: 1.5rem;
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+    padding: 0.75rem 0;
+    margin-bottom: 2.5rem;
+    font-size: 0.88rem;
+    text-align: center;
+    color: var(--mid);
+    font-style: italic;
+}
+
+.ranking-banner a {
+    color: var(--ink);
+    font-style: normal;
+    font-weight: 500;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-color: var(--rule);
+}
+
+.ranking-banner a:hover {
+    text-decoration-color: var(--ink);
+}
+
+/* ── COMPARE: two-column grid ── */
+.sentences-grid {
+    display: grid;
+    grid-template-columns: 1fr 36px 1fr;
+    gap: 1.5rem;
+    align-items: start;
+    margin-bottom: 2rem;
+}
+
+.sentence-vs {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 2rem;
+    font-size: 0.7rem;
+    font-weight: 400;
+    color: var(--mid);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+/* ── SENTENCE CARD ── */
+.sentence-card {
+    border: 1px solid var(--rule);
+    padding: 1.8rem 1.6rem 1.4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.4rem;
+    background: var(--bg);
+    transition: border-color 0.18s;
+}
+
+.sentence-card:hover {
+    border-color: var(--mid);
+}
+
+.sentence-text {
+    font-family: var(--font);
+    font-size: 1.1rem;
+    line-height: 1.75;
+    color: var(--ink);
+    margin: 0;
+    flex-grow: 1;
+}
+
+.choose-btn {
+    display: block;
+    width: 100%;
+    padding: 0.7rem 1rem;
+    background: var(--ink);
+    color: var(--bg);
+    border: 1px solid var(--ink);
+    font-family: var(--font);
+    font-size: 0.88rem;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    transition: opacity 0.15s;
+    border-radius: 0;
+}
+
+.choose-btn:hover {
+    opacity: 0.72;
+}
+
+/* ── MOBILE ── */
+@media (max-width: 640px) {
+    .sentences-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    .sentence-vs {
+        padding-top: 0;
+        text-align: center;
+    }
+}
+
+/* ── FOOTER NOTE ── */
+.compare-footer {
+    text-align: center;
+    font-size: 0.9rem;
+    letter-spacing: 0.04em;
+    color: var(--mid);
+    opacity: 0.7;
+    margin-top: 0.75rem;
+    padding-bottom: 3.5rem;
+}
+
+/* ── ABOUT PANEL ── */
+.about-section {
+    text-align: center;
+    margin: 1.5rem 0 0.5rem;
+}
+
+.about-toggle {
+    background: none;
+    border: none;
+    font-family: var(--font);
+    font-size: 0.78rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--mid);
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-color: var(--rule);
+    padding: 0;
+}
+
+.about-toggle:hover {
+    text-decoration-color: var(--mid);
+}
+
+.about-panel {
+    max-width: 600px;
+    margin: 1.2rem auto 0;
+    text-align: left;
+    font-size: 0.9rem;
+    line-height: 1.7;
+    color: var(--mid);
+    border-top: 1px solid var(--rule);
+    padding-top: 1.2rem;
+}
+
+.about-panel p { margin: 0 0 0.85rem; }
+.about-panel p:last-child { margin-bottom: 0; }
+
+/* =========================================================
+   Ranking page
+   ========================================================= */
+
+.ranking-page-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.ranking-page-header h2 {
+    margin: 0;
+    font-size: 1.6rem;
+    font-weight: 400;
+    letter-spacing: 0.02em;
+}
+
+.ranking-meta {
+    font-size: 0.95rem;
+    color: var(--mid);
+    font-style: italic;
+    margin: 0;
+}
+
+.compare-more-btn {
+    display: block;
+    width: fit-content;
+    margin: 0 auto;
+    padding: 0.5rem 1.1rem;
+    background: var(--ink);
+    color: var(--bg);
+    text-decoration: none;
+    font-family: var(--font);
+    font-size: 0.82rem;
+    letter-spacing: 0.04em;
+    transition: opacity 0.15s;
+    border-radius: 0;
+}
+
+.compare-more-btn:hover {
+    opacity: 0.72;
+}
+
+/* Ranking table */
+.ranking-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 3rem;
+}
+
+.ranking-table th {
+    text-align: left;
+    padding: 0.4rem 0.8rem;
+    border-bottom: 1px solid var(--ink);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--mid);
+    white-space: nowrap;
+    font-weight: 400;
+}
+
+.ranking-table td {
+    padding: 1.1rem 0.8rem;
+    border-bottom: 1px solid var(--rule);
+    vertical-align: top;
+}
+
+.ranking-table tr:last-child td {
+    border-bottom: none;
+}
+
+.rank-num {
+    font-size: 0.85rem;
+    color: var(--mid);
+    text-align: right;
+    padding-right: 1.2rem;
+    white-space: nowrap;
+    width: 2.5rem;
+}
+
+.rank-sentence {
+    font-family: var(--font);
+    font-size: 1rem;
+    line-height: 1.65;
+    color: var(--ink);
+}
+
+.rank-book-info {
+    margin-top: 0.6rem;
+}
+
+.reveal-btn {
+    background: none;
+    border: 1px solid var(--rule);
+    padding: 0.15rem 0.5rem;
+    font-family: var(--font);
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    color: var(--mid);
+    cursor: pointer;
+    transition: border-color 0.15s, color 0.15s;
+    border-radius: 0;
+}
+
+.reveal-btn:hover {
+    border-color: var(--mid);
+    color: var(--ink);
+}
+
+.book-details {
+    display: none;
+    font-size: 0.85rem;
+    color: var(--mid);
+    margin-top: 0.4rem;
+    font-style: italic;
+}
+
+.book-details.visible {
+    display: block;
+}
+
+.book-title {
+    font-style: italic;
+    font-weight: 500;
+    color: var(--ink);
+}
+
+.rank-score {
+    font-size: 0.82rem;
+    color: var(--mid);
+    white-space: nowrap;
+    text-align: right;
+}
+
+.win-loss {
+    font-size: 0.72rem;
+    color: var(--mid);
+    margin-top: 0.25rem;
+}
+
+.low-data {
+    opacity: 0.55;
+}
+
+/* ── YOUR BOOKS box ── */
+.your-books {
+    margin: 3rem 0 2rem;
+    border-top: 1px solid var(--rule);
+    padding-top: 2rem;
+}
+
+.your-books h3 {
+    font-size: 0.72rem;
+    font-weight: 400;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--mid);
+    margin-bottom: 1.25rem;
+}
+
+.your-books-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+    gap: 1px;
+    border: 1px solid var(--rule);
+}
+
+.your-book-card {
+    background: var(--bg);
+    border: none;
+    padding: 1rem 1.1rem;
+    border-right: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+}
+
+.your-book-sentence {
+    font-family: var(--font);
+    font-size: 0.9rem;
+    line-height: 1.55;
+    color: var(--ink);
+    margin-bottom: 0.4rem;
+    font-style: italic;
+}
+
+.your-book-meta {
+    font-size: 0.72rem;
+    color: var(--mid);
+    letter-spacing: 0.02em;
+}
+
+.your-book-title {
+    font-style: normal;
+}
+
+/* =========================================================
+   Error page
+   ========================================================= */
+
+.error-page {
+    text-align: center;
+    padding: 4rem 1rem;
+    color: var(--mid);
+    font-style: italic;
+}

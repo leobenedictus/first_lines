@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>First Sentences — Review</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 14px;
+    background: #f5f3ef;
+    color: #1a1a1a;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ---- Top bar ---- */
+  .topbar {
+    background: #1a1a1a;
+    color: #fff;
+    padding: .6rem 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    flex-shrink: 0;
+  }
+  .topbar h1 { margin: 0; font-size: 1rem; font-weight: 600; }
+  .topbar .progress {
+    font-size: .82rem;
+    color: #aaa;
+  }
+  .topbar .progress strong { color: #fff; }
+
+  /* ---- Main layout ---- */
+  .layout {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  /* ---- Sidebar ---- */
+  .sidebar {
+    background: #fff;
+    border-right: 1px solid #ddd8cf;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .sidebar-search {
+    padding: .6rem .8rem;
+    border-bottom: 1px solid #eee;
+    flex-shrink: 0;
+  }
+  .sidebar-search input {
+    width: 100%;
+    padding: .4rem .6rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: .82rem;
+    background: #f9f9f9;
+  }
+  .book-list {
+    overflow-y: auto;
+    flex: 1;
+  }
+  .book-item {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    padding: .55rem .8rem;
+    border-bottom: 1px solid #f0ede8;
+    cursor: pointer;
+    transition: background .1s;
+  }
+  .book-item:hover { background: #f5f3ef; }
+  .book-item.active { background: #e8f0fb; }
+  .book-item.done .book-title { color: #888; }
+  .status-icon {
+    width: 16px;
+    flex-shrink: 0;
+    text-align: center;
+    font-size: 12px;
+  }
+  .status-icon.manual { color: #2a7a2a; }
+  .status-icon.auto   { color: #bbb; }
+  .book-title {
+    font-size: .82rem;
+    line-height: 1.3;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* ---- Detail panel ---- */
+  .detail {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    padding: 0;
+  }
+  .detail-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #bbb;
+    font-size: 1rem;
+    flex: 1;
+  }
+  .detail-header {
+    padding: 1rem 1.4rem .8rem;
+    border-bottom: 1px solid #ddd8cf;
+    flex-shrink: 0;
+    background: #fff;
+  }
+  .detail-header h2 {
+    margin: 0 0 .2rem;
+    font-size: 1.05rem;
+  }
+  .detail-header .book-meta {
+    font-size: .82rem;
+    color: #888;
+  }
+  .detail-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem 1.4rem;
+  }
+
+  /* Current sentence */
+  .sentence-section { margin-bottom: 1.4rem; }
+  .section-label {
+    font-size: .72rem;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: #999;
+    margin-bottom: .4rem;
+  }
+  .section-label .manual-badge {
+    display: inline-block;
+    background: #d4edda;
+    color: #2a7a2a;
+    border-radius: 3px;
+    padding: 1px 5px;
+    font-size: .7rem;
+    margin-left: .4rem;
+    text-transform: none;
+    letter-spacing: 0;
+    vertical-align: middle;
+  }
+  .current-sentence {
+    font-family: Georgia, serif;
+    font-size: 1rem;
+    line-height: 1.65;
+    background: #fffbe6;
+    border-left: 3px solid #f0c000;
+    padding: .7rem .9rem;
+    border-radius: 0 4px 4px 0;
+  }
+  .clear-btn {
+    margin-top: .4rem;
+    font-size: .75rem;
+    background: none;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    padding: .2rem .55rem;
+    cursor: pointer;
+    color: #999;
+  }
+  .clear-btn:hover { border-color: #999; color: #555; }
+
+  /* Raw text */
+  .raw-section { margin-bottom: 2rem; }
+  .raw-text {
+    font-family: 'Courier New', monospace;
+    font-size: .78rem;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    background: #fff;
+    border: 1px solid #ddd8cf;
+    border-radius: 4px;
+    padding: 1rem;
+    cursor: text;
+    user-select: text;
+  }
+  .raw-text mark {
+    background: #ffe066;
+    padding: 0 1px;
+    border-radius: 2px;
+  }
+
+  /* ---- Selection popup ---- */
+  #selection-popup {
+    display: none;
+    position: fixed;
+    z-index: 100;
+    background: #1a1a1a;
+    color: #fff;
+    border-radius: 6px;
+    padding: .4rem .5rem;
+    font-size: .82rem;
+    box-shadow: 0 4px 16px rgba(0,0,0,.25);
+    white-space: nowrap;
+    pointer-events: auto;
+  }
+  #selection-popup::before {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: 1.2rem;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-bottom: 5px solid #1a1a1a;
+  }
+  #save-selection-btn {
+    background: #2c7a2c;
+    border: none;
+    color: #fff;
+    padding: .35rem .75rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: .82rem;
+    font-weight: 600;
+  }
+  #save-selection-btn:hover { background: #1e5c1e; }
+
+  /* ---- Toast ---- */
+  #toast {
+    display: none;
+    position: fixed;
+    bottom: 1.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #2c7a2c;
+    color: #fff;
+    padding: .5rem 1.2rem;
+    border-radius: 20px;
+    font-size: .85rem;
+    font-weight: 600;
+    z-index: 200;
+    pointer-events: none;
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <h1>First Sentences — Review Tool</h1>
+  <div class="progress">
+    <strong id="done-count">{{ done }}</strong> / {{ total }} manually reviewed
+  </div>
+</div>
+
+<div class="layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-search">
+      <input type="text" id="search-input" placeholder="Filter books…" oninput="filterBooks()">
+    </div>
+    <div class="book-list" id="book-list">
+      {% for book in books %}
+      <div class="book-item {{ 'done' if book.manually_set else '' }}"
+           data-id="{{ book.id }}"
+           data-title="{{ book.title | lower }}"
+           onclick="loadBook({{ book.id }})">
+        <span class="status-icon {{ 'manual' if book.manually_set else 'auto' }}">
+          {{ '✓' if book.manually_set else '·' }}
+        </span>
+        <span class="book-title">{{ book.title }}</span>
+      </div>
+      {% endfor %}
+    </div>
+  </aside>
+
+  <!-- Detail panel -->
+  <main class="detail" id="detail">
+    <div class="detail-empty" id="detail-empty">
+      ← Select a book to review
+    </div>
+    <div id="detail-content" style="display:none; display:flex; flex-direction:column; height:100%; overflow:hidden;">
+      <div class="detail-header">
+        <h2 id="d-title"></h2>
+        <div class="book-meta" id="d-meta"></div>
+      </div>
+      <div class="detail-body">
+        <div class="sentence-section">
+          <div class="section-label">
+            Current sentence
+            <span class="manual-badge" id="manual-badge" style="display:none">manually set</span>
+          </div>
+          <div class="current-sentence" id="d-sentence"></div>
+          <button class="clear-btn" id="clear-btn" onclick="clearManual()" style="display:none">
+            Remove manual flag (allow auto re-extraction)
+          </button>
+        </div>
+        <div class="raw-section">
+          <div class="section-label">
+            Raw opening text — select any passage, then click "Save as first sentence"
+          </div>
+          <div class="raw-text" id="d-raw" onmouseup="onTextSelect()"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+</div>
+
+<!-- Selection popup -->
+<div id="selection-popup">
+  <button id="save-selection-btn" onclick="saveSelection()">✓ Save as first sentence</button>
+</div>
+
+<!-- Toast -->
+<div id="toast">Saved!</div>
+
+<script>
+let currentBookId = null;
+let currentSelection = '';
+
+// ---- Load book ----
+function loadBook(id) {
+  currentBookId = id;
+
+  // Highlight sidebar item
+  document.querySelectorAll('.book-item').forEach(el => el.classList.remove('active'));
+  const item = document.querySelector(`.book-item[data-id="${id}"]`);
+  if (item) item.classList.add('active');
+
+  document.getElementById('detail-empty').style.display = 'none';
+  document.getElementById('detail-content').style.display = 'flex';
+  document.getElementById('d-raw').textContent = 'Loading…';
+  document.getElementById('d-sentence').textContent = '';
+
+  fetch(`/book/${id}`)
+    .then(r => r.json())
+    .then(data => {
+      document.getElementById('d-title').textContent = data.title;
+      document.getElementById('d-meta').textContent =
+        data.author + ' · Gutenberg ID ' + data.gutenberg_id;
+      document.getElementById('d-sentence').textContent = data.sentence;
+
+      const badge = document.getElementById('manual-badge');
+      const clearBtn = document.getElementById('clear-btn');
+      badge.style.display = data.manually_set ? 'inline-block' : 'none';
+      clearBtn.style.display = data.manually_set ? 'inline-block' : 'none';
+
+      // Render raw text, highlighting the current sentence
+      renderRawText(data.text, data.sentence);
+    });
+}
+
+function renderRawText(text, sentence) {
+  const container = document.getElementById('d-raw');
+  if (!sentence || !text.includes(sentence)) {
+    container.textContent = text;
+    return;
+  }
+  // Split at the sentence and wrap in a <mark>
+  const idx = text.indexOf(sentence);
+  const before = text.slice(0, idx);
+  const match  = text.slice(idx, idx + sentence.length);
+  const after  = text.slice(idx + sentence.length);
+
+  container.textContent = '';
+  container.appendChild(document.createTextNode(before));
+  const mark = document.createElement('mark');
+  mark.textContent = match;
+  container.appendChild(mark);
+  container.appendChild(document.createTextNode(after));
+
+  // Scroll mark into view
+  setTimeout(() => mark.scrollIntoView({ block: 'center', behavior: 'smooth' }), 100);
+}
+
+// ---- Text selection ----
+function onTextSelect() {
+  const sel = window.getSelection();
+  const text = sel ? sel.toString().trim() : '';
+  const popup = document.getElementById('selection-popup');
+
+  if (text.length < 15) {
+    popup.style.display = 'none';
+    currentSelection = '';
+    return;
+  }
+
+  currentSelection = text;
+  const range = sel.getRangeAt(0);
+  const rect = range.getBoundingClientRect();
+
+  popup.style.display = 'block';
+  // Position just below the selection
+  const top = rect.bottom + window.scrollY + 8;
+  let left = rect.left + window.scrollX;
+  // Keep popup on screen
+  const pw = popup.offsetWidth || 200;
+  if (left + pw > window.innerWidth - 12) left = window.innerWidth - pw - 12;
+  popup.style.top = top + 'px';
+  popup.style.left = left + 'px';
+}
+
+// Hide popup when clicking elsewhere
+document.addEventListener('mousedown', function(e) {
+  if (!document.getElementById('selection-popup').contains(e.target)) {
+    document.getElementById('selection-popup').style.display = 'none';
+  }
+});
+
+// ---- Save selection ----
+function saveSelection() {
+  if (!currentSelection || !currentBookId) return;
+
+  fetch(`/book/${currentBookId}/save`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ sentence: currentSelection }),
+  })
+  .then(r => r.json())
+  .then(data => {
+    if (!data.ok) { alert('Error: ' + data.error); return; }
+
+    document.getElementById('selection-popup').style.display = 'none';
+    document.getElementById('d-sentence').textContent = data.sentence;
+    document.getElementById('manual-badge').style.display = 'inline-block';
+    document.getElementById('clear-btn').style.display = 'inline-block';
+
+    // Update raw text highlight
+    const rawEl = document.getElementById('d-raw');
+    const fullText = rawEl.innerText;
+    renderRawText(fullText, data.sentence);
+
+    // Mark sidebar item as done
+    const item = document.querySelector(`.book-item[data-id="${currentBookId}"]`);
+    if (item) {
+      item.classList.add('done');
+      item.querySelector('.status-icon').textContent = '✓';
+      item.querySelector('.status-icon').className = 'status-icon manual';
+    }
+
+    // Update progress counter
+    updateDoneCount(1);
+    showToast('Saved!');
+    currentSelection = '';
+  });
+}
+
+// ---- Clear manual flag ----
+function clearManual() {
+  if (!currentBookId) return;
+  fetch(`/book/${currentBookId}/clear`, { method: 'POST' })
+    .then(r => r.json())
+    .then(data => {
+      if (!data.ok) return;
+      document.getElementById('manual-badge').style.display = 'none';
+      document.getElementById('clear-btn').style.display = 'none';
+
+      const item = document.querySelector(`.book-item[data-id="${currentBookId}"]`);
+      if (item && item.classList.contains('done')) {
+        item.classList.remove('done');
+        item.querySelector('.status-icon').textContent = '·';
+        item.querySelector('.status-icon').className = 'status-icon auto';
+        updateDoneCount(-1);
+      }
+      showToast('Flag cleared');
+    });
+}
+
+// ---- Sidebar filter ----
+function filterBooks() {
+  const q = document.getElementById('search-input').value.toLowerCase();
+  document.querySelectorAll('.book-item').forEach(el => {
+    el.style.display = el.dataset.title.includes(q) ? '' : 'none';
+  });
+}
+
+// ---- Helpers ----
+function updateDoneCount(delta) {
+  const el = document.getElementById('done-count');
+  el.textContent = parseInt(el.textContent, 10) + delta;
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.display = 'block';
+  setTimeout(() => { t.style.display = 'none'; }, 1800);
+}
+</script>
+</body>
+</html>

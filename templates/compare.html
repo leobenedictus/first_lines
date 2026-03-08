@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<header class="site-header">
+    <h1>Which opening sentence makes you more keen to read on?</h1>
+    
+</header>
+
+<form method="POST" action="{{ url_for('vote') }}">
+    <input type="hidden" name="book_a_id" value="{{ book_a.id }}">
+    <input type="hidden" name="book_b_id" value="{{ book_b.id }}">
+    <!-- Honeypot field: hidden from humans, filled by bots -->
+    <input type="text" name="website" value="" style="display:none" tabindex="-1" autocomplete="off">
+
+    <div class="sentences-grid">
+
+        <div class="sentence-card">
+            <p class="sentence-text">{{ book_a.first_sentence }}</p>
+            <button type="submit" name="winner_id" value="{{ book_a.id }}" class="choose-btn">
+                I'd read this one
+            </button>
+        </div>
+
+        <div class="sentence-vs">VS</div>
+
+        <div class="sentence-card">
+            <p class="sentence-text">{{ book_b.first_sentence }}</p>
+            <button type="submit" name="winner_id" value="{{ book_b.id }}" class="choose-btn">
+                I'd read this one
+            </button>
+        </div>
+
+    </div>
+</form>
+
+<p class="compare-footer">Just go with your gut. Books are revealed on the rankings page.</p>
+
+{% if count == 1 %}
+<div class="ranking-banner">
+    You've made your first comparison — <a href="{{ url_for('ranking') }}">see the current ranking</a>, or keep going to make it more accurate.
+</div>
+{% elif count > 1 %}
+<div class="ranking-banner">
+    You've done {{ count }} comparisons.
+    <a href="{{ url_for('ranking') }}">See the current ranking →</a>
+</div>
+{% endif %}
+
+<div class="about-section">
+    <button class="about-toggle" onclick="toggleAbout(this)" aria-expanded="false">
+        How I made this
+    </button>
+    <div class="about-panel" id="about-panel" hidden>
+        <p><!-- Replace this with your own text. -->
+        <h3>For book people</h3>
+
+There are many old novels available from Project Gutenberg, but getting a computer to identify their first sentences is hard.
+
+Computers lack the human ability to confidently flick past front matter and chapter headings. And even then some books begin Dear Someone, which isn't my idea of a first sentence. Some begin with dialogue, some with enormous sentences that are really five sentences, some with decorative bits of poetry. Some have author’s notes that turn out to be part of the fiction themselves. Many famous novels have first sentences that name Mr Sherlock Holmes or the House of Usher, and thereby make themselves impossible for even dilettante readers not to recognise. I have left in some very guessable first sentences, which I hope most readers won’t identify.
+
+But if you’re a book person, what I really want to say to you is that first sentences illustrate something non-scientists too easily miss about the world. We believe it to be a system of intelligible units, because that's the practical, approximate way in which we think, when in fact the world is a hell of overlapping exceptions. Please remember this whenever people come at you with data. 
+<p></p>
+
+<h3>For computer people</h3>
+
+For the above reasons it became obvious early on that I’d need to select the sentences by hand. But when I say by hand, I’m skipping the interesting part. 
+
+Even 100 sentences are a substantial pain to copy and paste, let alone to type. But I realised that I could get Claude Code to quickly build me a tool to make it easy—a little locally-hosted Flask app that displayed the early pages of each book and allowed me to select the piece of text I wanted, one by one on the same page. 
+
+I know that proper engineers often begin by building the tools they need to build the tools they need, but this for me is an interesting case where AI has been a tool that enabled human judgement, rather than replacing it.</p>
+        <p>The ranking is produced by a method called <em>comparative judgement</em>. Rather than asking people to rate sentences on a scale, it asks them to make a simple choice between two. Hundreds of those pairwise choices, aggregated, produce a more reliable ranking than star ratings. Each comparison updates an Elo score for each sentence—the same system used to rank chess players.</p>
+    </div>
+</div>
+
+<script>
+function toggleAbout(btn) {
+    const panel = document.getElementById('about-panel');
+    const open = btn.getAttribute('aria-expanded') === 'true';
+    panel.hidden = open;
+    btn.setAttribute('aria-expanded', String(!open));
+}
+</script>
+
+{% endblock %}

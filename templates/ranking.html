@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<header class="site-header">
+    <h1>Current ranking</h1>
+</header>
+
+<div class="ranking-page-header">
+    <p class="ranking-meta">
+    Based on {{ "{:,}".format(total_comparisons) }} comparison{{ 's' if total_comparisons != 1 else '' }}
+    across all visitors.
+    {% if books | length < total_books %}
+        {{ total_books - books | length }} book{{ 's' if (total_books - books | length) != 1 else '' }}
+        not yet compared.
+    {% endif %}
+    Click <em>reveal</em> on any row to see the book it came from.
+    </p>    
+    <a href="{{ url_for('index') }}" class="compare-more-btn">Compare more sentences</a>
+</div>
+
+
+
+{% if books %}
+<table class="ranking-table">
+    <thead>
+        <tr>
+            <th style="text-align:right">#</th>
+            <th>Opening sentence</th>
+            <th style="text-align:right">Score</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for book in books %}
+        <tr class="{{ 'low-data' if book.comparisons < 3 else '' }}">
+
+            <td class="rank-num">{{ loop.index }}</td>
+
+            <td>
+                <div class="rank-sentence">{{ book.first_sentence }}</div>
+                <div class="rank-book-info">
+                    <button class="reveal-btn"
+                            onclick="toggleReveal(this)"
+                            type="button">reveal</button>
+                    <div class="book-details" id="details-{{ book.id }}">
+                        <span class="book-title">{{ book.title }}</span>
+                        &nbsp;·&nbsp; {{ book.author }}
+                    </div>
+                </div>
+            </td>
+
+            <td class="rank-score">
+                {{ "%.0f"|format(book.elo) }}
+                <div class="win-loss">{{ book.wins }}W / {{ book.losses }}L</div>
+            </td>
+
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p style="color:#aaa; text-align:center; padding: 2rem 0;">
+    No comparisons yet — be the first!
+    <a href="{{ url_for('index') }}">Compare some sentences →</a>
+</p>
+{% endif %}
+
+<script>
+function toggleReveal(btn) {
+    var detailsId = btn.parentElement.querySelector('.book-details').id;
+    var details = document.getElementById(detailsId);
+    if (details.classList.contains('visible')) {
+        details.classList.remove('visible');
+        btn.textContent = 'reveal';
+    } else {
+        details.classList.add('visible');
+        btn.textContent = 'hide';
+    }
+}
+</script>
+
+
+{% if seen_books %}
+<div class="your-books">
+    <h3>Books you've seen</h3>
+    <div class="your-books-grid">
+        {% for book in seen_books %}
+        <div class="your-book-card">
+            <div class="your-book-sentence">{{ book.first_sentence.split('\n')[0][:80] }}{% if book.first_sentence | length > 80 %}…{% endif %}</div>
+            <div class="your-book-meta"><span class="your-book-title">{{ book.title }}</span> · {{ book.author }}</div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}
